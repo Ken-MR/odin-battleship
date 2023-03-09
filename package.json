@@ -1,0 +1,28 @@
+{
+  "name": "odin-battleship",
+  "version": "1.0.0",
+  "description": "Battleship app built using Javascript, HTML, and CSS",
+  "main": "page-control.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ken-MR/odin-battleship.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ken-MR/odin-battleship/issues"
+  },
+  "homepage": "https://github.com/Ken-MR/odin-battleship#readme",
+  "devDependencies": {
+    "css-loader": "^6.7.3",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.76.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
