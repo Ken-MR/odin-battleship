@@ -138,3 +138,40 @@ class GameBoard {
 }
 
 module.exports.GameBoard = GameBoard;
+
+
+
+class GamePlayer {
+  constructor (name = "computer", type = "computer") {
+    this.name = name;
+    this.type = type;
+    this.gameBoard = new GameBoard(name);
+  }
+
+  targetSpace (type, enemy, coordinates) {
+    // if the computer is firing then pick a random location to target
+    // keep selecting targets until an untargeted space is found
+    if (type === "computer") {
+      let targeted;
+      let x;
+      let y;
+      do {
+        x = this.getCoordinates();
+        y = this.getCoordinates();
+        targeted = enemy.board[y][x].struck;
+      } while (targeted)
+      enemy.gameBoard.receiveAttack([y, x]);
+    }
+    // DOM prevents targeting a struck space by disabling click event so no need to check
+    else {
+      enemy.gameBoard.receiveAttack(coordinates);
+    }
+  }
+
+  getCoordinates () {
+    // generate a random value between 0 and 6; the coordinate range of the game board
+    return Math.floor(Math.random() * 7);
+  }
+}
+
+module.exports.GamePlayer = GamePlayer;

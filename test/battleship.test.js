@@ -147,3 +147,22 @@ test("They sunk our battleship! We lost!", () => {
   testBoard.receiveAttack([0,3]);
   expect(testBoard.lost).toBeTruthy();
 });
+
+
+
+// test the ability to create human and computer players and their game boards
+const humanPlayer = new gameLogic.GamePlayer("player", "human");
+const computerPlayer = new gameLogic.GamePlayer();
+
+test('A human player exists and is properly named', () => {
+  expect(humanPlayer.name).toEqual("player");
+});
+
+test('A computer player exists and is properly named', () => {
+  expect(computerPlayer.name).toEqual("computer");
+});
+
+test('The game registers that the human player fired on space [0,0]', () => {
+  humanPlayer.targetSpace('human', computerPlayer, [0,0]);
+  expect(computerPlayer.gameBoard.board[0][0].struck).toBeTruthy();
+});
