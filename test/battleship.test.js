@@ -90,3 +90,20 @@ test("The player's battleship doesn't travel down the y-axis", () => {
 test("Trying to place a ship outside of the board's bounds will fail", () => {
   expect(testBoard.placeShip('battleship', 'x', [0,5])).toBeFalsy();
 });
+
+// test if you can place another ship
+
+test("Trying to place a ship that overlaps an existing one will fail", () => {
+  expect(testBoard.placeShip('destroyer', 'x', [0,1])).toBeFalsy();
+});
+
+// place destroyer near battleship but not on it
+testBoard.placeShip('battleship', 'x', [2,0]);
+
+test("A second ship is placed properly", () => {
+  expect(testBoard.board[2][0].occupied).toBeTruthy();
+});
+
+test("The second ship makes the fleet count equal to two", () => {
+  expect(testBoard.fleet.length).toEqual(2);
+});

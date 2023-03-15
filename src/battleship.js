@@ -68,25 +68,42 @@ class GameBoard {
 
     let shipLength = ship.length;
 
-    // if ship is placed such that it falls out of bounds on the board then reject placement
-    if ((direction === 'y') && ((location[0] + shipLength) < 7)) {
-      // ship placement is valid so add it to the player's fleet and populate required spaces
-      this.fleet.push(ship);
-      for (let i = location[0]; i < (location[0] + shipLength); i++) {
-        this.board[i][location[1]].occupied = ship;
-      }
+    let startPoint = (direction === 'y') ? location[0] : location[1];
+
+    // if ship is placed such that it falls out of bounds on the board or overlaps another ship then reject placement
+    if ((startPoint + shipLength) > 7) {
+      return false;
     }
-    else if ((direction === 'x') && ((location[1] + shipLength) < 7)) {
-      // same as above but alternate axis
-      this.fleet.push(ship);
-      for (let i = location[1]; i < (location[1] + shipLength); i++) {
-        this.board[location[0]][i].occupied = ship;
+    else if (direction === 'y') {
+      // if any space along the ship's intended path is occupied reject placement
+      for (let i = startPoint; i < (startPoint + shipLength); i++) {
+        if (this.board[i][location[1]].occupied) {
+          return false;
+        }
       }
     }
     else {
-      return false;
+      // if any space along the ship's intended path is occupied reject placement
+      for (let i = startPoint; i < (startPoint + shipLength); i++) {
+        if (this.board[location[0]][i].occupied) {
+          return false;
+        }
+      }
     }
 
+
+    // ship placement is valid so add it to the player's fleet and populate required spaces
+    this.fleet.push(ship);
+    if (direction === 'y') {
+      for (let i = startPoint; i < (startPoint + shipLength); i++) {
+        this.board[i][location[1]].occupied = ship;
+      }
+    }    
+    else {
+      for (let i = startPoint; i < (startPoint + shipLength); i++) {
+        this.board[location[0]][i].occupied = ship;
+      }
+    }
   }
 
   receiveAttack (space) {
