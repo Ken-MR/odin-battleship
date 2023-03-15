@@ -107,3 +107,31 @@ test("A second ship is placed properly", () => {
 test("The second ship makes the fleet count equal to two", () => {
   expect(testBoard.fleet.length).toEqual(2);
 });
+
+
+
+// launch attacks on space containing the destroyer
+test("Destroyer struck once so far", () => {
+  testBoard.receiveAttack([2,0]);
+  expect(testBoard.fleet[1].hits).toEqual(1);
+});
+
+test("The destroyer still floats", () => {
+  expect(testBoard.fleet[1].sunk).toBeFalsy();
+});
+
+test("The space it occupies is flagged as previously targeted", () => {
+  expect(testBoard.board[2][0].struck).toBeTruthy();
+});
+
+test("The next attack was a miss", () => {
+  testBoard.receiveAttack([2,0]);
+  testBoard.receiveAttack([1,0]);
+  expect(testBoard.fleet[1].sunk).toBeFalsy();
+});
+
+test("Direct hit, the destroyer has sunk", () => {
+  testBoard.receiveAttack([2,0]);
+  testBoard.receiveAttack([2,1]);
+  expect(testBoard.fleet[1].sunk).toBeTruthy();
+});

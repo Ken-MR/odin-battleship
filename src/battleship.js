@@ -65,10 +65,12 @@ class GameBoard {
   placeShip(shipType, direction, location) {
     // create ship object
     let ship = new ShipCreator(shipType);
-
     let shipLength = ship.length;
 
-    let startPoint = (direction === 'y') ? location[0] : location[1];
+    let x = location[1];
+    let y = location[0];
+
+    let startPoint = (direction === 'y') ? y : x;
 
     // if ship is placed such that it falls out of bounds on the board or overlaps another ship then reject placement
     if ((startPoint + shipLength) > 7) {
@@ -77,7 +79,7 @@ class GameBoard {
     else if (direction === 'y') {
       // if any space along the ship's intended path is occupied reject placement
       for (let i = startPoint; i < (startPoint + shipLength); i++) {
-        if (this.board[i][location[1]].occupied) {
+        if (this.board[i][x].occupied) {
           return false;
         }
       }
@@ -85,7 +87,7 @@ class GameBoard {
     else {
       // if any space along the ship's intended path is occupied reject placement
       for (let i = startPoint; i < (startPoint + shipLength); i++) {
-        if (this.board[location[0]][i].occupied) {
+        if (this.board[y][i].occupied) {
           return false;
         }
       }
@@ -96,18 +98,28 @@ class GameBoard {
     this.fleet.push(ship);
     if (direction === 'y') {
       for (let i = startPoint; i < (startPoint + shipLength); i++) {
-        this.board[i][location[1]].occupied = ship;
+        this.board[i][x].occupied = ship;
       }
     }    
     else {
       for (let i = startPoint; i < (startPoint + shipLength); i++) {
-        this.board[location[0]][i].occupied = ship;
+        this.board[y][i].occupied = ship;
       }
     }
   }
 
-  receiveAttack (space) {
+  receiveAttack (coordinates) {
+    let x = coordinates[1];
+    let y = coordinates[0];
 
+    // records location of strike
+    // the DOM code will prevent strikes on previously targeted spaces
+    this.board[y][x].struck = true;
+
+    // if the space is occupied the hit function is called on the ship
+    if (this.board[y][x].occupied) {
+      this.board[y][x].occupied.hit();
+    }
   }
 }
 
