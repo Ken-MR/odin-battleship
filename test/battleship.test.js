@@ -135,3 +135,15 @@ test("Direct hit, the destroyer has sunk", () => {
   testBoard.receiveAttack([2,1]);
   expect(testBoard.fleet[1].sunk).toBeTruthy();
 });
+
+test("One ship still floats", () => {
+  expect(testBoard.lost).toBeFalsy();
+});
+
+test("They sunk our battleship! We lost!", () => {
+  testBoard.receiveAttack([0,0]);
+  testBoard.receiveAttack([0,1]);
+  testBoard.receiveAttack([0,2]);
+  testBoard.receiveAttack([0,3]);
+  expect(testBoard.lost).toBeTruthy();
+});

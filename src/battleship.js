@@ -119,6 +119,20 @@ class GameBoard {
     // if the space is occupied the hit function is called on the ship
     if (this.board[y][x].occupied) {
       this.board[y][x].occupied.hit();
+      // check if any ships in the fleet are still floating
+      this.fleetStatus();
+    }
+  }
+
+  fleetStatus () {
+    for (let i = 0; i < this.fleet.length; i++) {
+      if (!this.fleet[i].sunk) {
+        return false;
+      }
+      else {
+        this.lost = true;
+        return true;
+      }
     }
   }
 }
