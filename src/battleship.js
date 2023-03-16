@@ -53,9 +53,9 @@ class GameBoard {
 
   generateBoard() {
     // 2d array of board spaces
-    let board = [[],[],[],[],[],[],[],[]];
-    for (let i = 0; i < 7; i++) {
-      for (let j = 0; j < 7; j++) {
+    let board = [[],[],[],[],[],[],[],[],[],[],[]];
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
         board[i].push(new Space([i, j]));
       }
     }
@@ -170,7 +170,7 @@ class GamePlayer {
 
   getCoordinates () {
     // generate a random value between 0 and 6; the coordinate range of the game board
-    return Math.floor(Math.random() * 7);
+    return Math.floor(Math.random() * 10);
   }
 }
 

@@ -1,4 +1,4 @@
-const gameLogic = require('../src/battleship.js')
+const gameLogic = require('../src/battleship.js');
 
 // tests to verify ship creation and various parameters and methods function properly
 const battleship = new gameLogic.ShipCreator('battleship');
@@ -88,7 +88,7 @@ test("The player's battleship doesn't travel down the y-axis", () => {
 });
 
 test("Trying to place a ship outside of the board's bounds will fail", () => {
-  expect(testBoard.placeShip('battleship', 'x', [0,5])).toBeFalsy();
+  expect(testBoard.placeShip('battleship', 'x', [0,8])).toBeFalsy();
 });
 
 // test if you can place another ship

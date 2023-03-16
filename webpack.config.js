@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: './src/page-control.js',
   devtool: 'inline-source-map',
+  mode: 'development',
   output: {
       filename: 'main.js',
       path: path.resolve(__dirname, 'dist/'),
@@ -11,7 +12,10 @@ module.exports = {
 	},
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Output Management',
+      title: 'Battleship',
+      template: './src/index.html',
+      filename: 'index.html',
+      inject: 'body',
     }),
   ],
   module: {
