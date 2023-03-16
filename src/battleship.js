@@ -11,7 +11,7 @@ class ShipCreator {
   getLength = (name) => {
     switch (name) {
       case 'destroyer': return 2;
-      case 'submariner': return 3;
+      case 'submarine': return 3;
       case 'cruiser': return 3;
       case 'battleship': return 4;
       case 'carrier': return 5;
@@ -53,7 +53,7 @@ class GameBoard {
 
   generateBoard() {
     // 2d array of board spaces
-    let board = [[],[],[],[],[],[],[],[],[],[],[]];
+    let board = [[],[],[],[],[],[],[],[],[],[]];
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
         board[i].push(new Space([i, j]));

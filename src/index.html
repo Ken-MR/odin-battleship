@@ -11,7 +11,11 @@
   <div id="game-screen">
     <h1 id="header">Battleship</h1>
     <div id="game-display">
-      Game Area
+      <form id="player-entry" onsubmit="event.preventDefault()">
+        <label for="playerNameInput">Enter Player Name:</label>
+        <input type="text" name="playerNameInput" id="playerNameInput" placeholder="Battleship Captain ________" pattern="^((?!computer).)*$" required>
+        <input type="submit" value="Start">
+      </form>
     </div>
   </div>
 </body>
