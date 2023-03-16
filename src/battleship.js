@@ -121,7 +121,11 @@ class GameBoard {
       this.board[y][x].occupied.hit();
       // check if any ships in the fleet are still floating
       this.fleetStatus();
+      // return true because the attack was a hit
+      return true;
     }
+    // return false for miss
+    return false;
   }
 
   fleetStatus () {
@@ -160,11 +164,13 @@ class GamePlayer {
         y = this.getCoordinates();
         targeted = enemy.board[y][x].struck;
       } while (targeted)
-      enemy.gameBoard.receiveAttack([y, x]);
+      let hit = enemy.gameBoard.receiveAttack([y, x]);
+      return hit;
     }
     // DOM prevents targeting a struck space by disabling click event so no need to check
     else {
-      enemy.gameBoard.receiveAttack(coordinates);
+      let hit = enemy.gameBoard.receiveAttack(coordinates);
+      return hit;
     }
   }
 
