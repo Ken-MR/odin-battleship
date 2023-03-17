@@ -107,7 +107,7 @@ const DOMControl = (() => {
               computerMove = false;
               // set to false; the computer made its move
             }
-          }, 2000);
+          }, 1500);
         });
       }
     }
@@ -162,39 +162,31 @@ const DOMControl = (() => {
 
     if ((player.type === 'human') && (target)) {
       messageDisplay.appendChild(document.createTextNode(`Direct hit, Captain ${player.name}!`));
-      console.log(`Direct hit, Captain ${player.name}!`)
       if (target.occupied.sunk) {
         messageDisplay.appendChild(document.createElement('br'));
         messageDisplay.appendChild(document.createTextNode(`You sunk the enemy's ${target.occupied.shipType}!`));
-        console.log(`You sunk the enemy's ${target.occupied.shipType}!`);
       }
       else {
         messageDisplay.appendChild(document.createElement('br'));
         messageDisplay.appendChild(document.createTextNode(`You struck the enemy's ${target.occupied.shipType}!`));
-        console.log(`You struck the enemy's ${target.occupied.shipType}!`);
       }
     }
     else if (player.type === 'human') {
       messageDisplay.appendChild(document.createTextNode("A miss! But we'll get them yet!"));
-      console.log("A miss! But we'll get them yet!");
     }
     else if ((player.type === 'computer') && (target)) {
       messageDisplay.appendChild(document.createTextNode("Blast!"));
-      console.log(`Blast!`);
       if (target.occupied.sunk) {
         messageDisplay.appendChild(document.createElement('br'));
         messageDisplay.appendChild(document.createTextNode(`The enemy just sunk our ${target.occupied.shipType}!`));
-        console.log(`The enemy just sunk our ${target.occupied.shipType}!`);
       }
       else {
         messageDisplay.appendChild(document.createElement('br'));
         messageDisplay.appendChild(document.createTextNode(`The enemy's hit our ${target.occupied.shipType}!`));
-        console.log(`The enemy's hit our ${target.occupied.shipType}!`);
       }
     }
     else {
       messageDisplay.appendChild(document.createTextNode("A miss! We're still in this!"));
-      console.log("A miss! We're still in this!");
     }
 
     if (humanPlayer.gameBoard.lost) {
@@ -207,13 +199,39 @@ const DOMControl = (() => {
 
   const gameEnd = (type) => {
     gameOver = true;
-
+    let messageDisplay = document.getElementById('messages');
     if (type === 'human') {
-      console.log("You lost!");
+      messageDisplay.appendChild(document.createTextNode("You lost!"));
     }
     else {
-      console.log("You won!");
+      messageDisplay.appendChild(document.createTextNode("You won!"));
     }
+    playAgain();
+  };
+
+  const playAgain = () => {
+    let gameScreen = document.getElementById('game-display');
+    let playAgain = document.createElement('button');
+    gameScreen.appendChild(playAgain);
+
+    playAgain.setAttribute('id', 'play-again');
+    playAgain.innerHTML = 'Play Again?';
+    playAgain.addEventListener('click', () => {
+      // recreate initial player form entry screen
+      gameScreen.innerHTML = 
+        `<form id="player-entry" onsubmit="event.preventDefault()">
+          <label for="playerNameInput">Enter Player Name:</label>
+          <input type="text" name="playerNameInput" id="playerNameInput" placeholder="Battleship Captain ________" pattern="^((?!computer).)*$" required>
+          <input type="submit" value="Start">
+        </form>`
+      
+      // remake event listener for inputting new player name
+      document.getElementById('player-entry').addEventListener("submit", () => {DOMControl.playerCreation()})
+
+      // reset game states
+      gameOver = false;
+      computerMove = false;
+    });
   };
   return { playerCreation };
 })();
