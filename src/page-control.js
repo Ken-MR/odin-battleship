@@ -51,6 +51,18 @@ const DOMControl = (() => {
     let gameDisplay = document.getElementById('game-display')
     gameDisplay.innerHTML = '';
 
+    let ocean = document.createElement('div');
+    ocean.setAttribute('id', 'game-waters');
+
+    let messageDisplay = document.createElement('div');
+    messageDisplay.setAttribute('id', 'messages');
+    messageDisplay.appendChild(document.createTextNode('Enemy fleet approaching!'));
+    messageDisplay.appendChild(document.createElement('br'));
+    messageDisplay.appendChild(document.createTextNode('Prepare for battle!'));
+
+    gameDisplay.appendChild(messageDisplay);
+    gameDisplay.appendChild(ocean);
+
     // create game boards to manipulate
     let playerBoard = document.createElement('div');
     playerBoard.setAttribute('id', 'player');
@@ -67,8 +79,8 @@ const DOMControl = (() => {
     playerBoard.appendChild(playerWaters);
     computerBoard.appendChild(computerWaters);
 
-    gameDisplay.appendChild(playerBoard);
-    gameDisplay.appendChild(computerBoard);
+    ocean.appendChild(playerBoard);
+    ocean.appendChild(computerBoard);
 
     // create event listeners for each space on the enemy game board to track if it was a hit or miss
     for (let i = 0; i < 10; i++) {
@@ -95,7 +107,7 @@ const DOMControl = (() => {
               computerMove = false;
               // set to false; the computer made its move
             }
-          }, 1000);
+          }, 2000);
         });
       }
     }
@@ -145,28 +157,43 @@ const DOMControl = (() => {
   };
 
   const gameMessage = (target, player) => {
+    let messageDisplay = document.getElementById('messages');
+    messageDisplay.innerHTML = '';
+
     if ((player.type === 'human') && (target)) {
+      messageDisplay.appendChild(document.createTextNode(`Direct hit, Captain ${player.name}!`));
       console.log(`Direct hit, Captain ${player.name}!`)
       if (target.occupied.sunk) {
+        messageDisplay.appendChild(document.createElement('br'));
+        messageDisplay.appendChild(document.createTextNode(`You sunk the enemy's ${target.occupied.shipType}!`));
         console.log(`You sunk the enemy's ${target.occupied.shipType}!`);
       }
       else {
+        messageDisplay.appendChild(document.createElement('br'));
+        messageDisplay.appendChild(document.createTextNode(`You struck the enemy's ${target.occupied.shipType}!`));
         console.log(`You struck the enemy's ${target.occupied.shipType}!`);
       }
     }
     else if (player.type === 'human') {
+      messageDisplay.appendChild(document.createTextNode("A miss! But we'll get them yet!"));
       console.log("A miss! But we'll get them yet!");
     }
     else if ((player.type === 'computer') && (target)) {
+      messageDisplay.appendChild(document.createTextNode("Blast!"));
       console.log(`Blast!`);
       if (target.occupied.sunk) {
+        messageDisplay.appendChild(document.createElement('br'));
+        messageDisplay.appendChild(document.createTextNode(`The enemy just sunk our ${target.occupied.shipType}!`));
         console.log(`The enemy just sunk our ${target.occupied.shipType}!`);
       }
       else {
+        messageDisplay.appendChild(document.createElement('br'));
+        messageDisplay.appendChild(document.createTextNode(`The enemy's hit our ${target.occupied.shipType}!`));
         console.log(`The enemy's hit our ${target.occupied.shipType}!`);
       }
     }
     else {
+      messageDisplay.appendChild(document.createTextNode("A miss! We're still in this!"));
       console.log("A miss! We're still in this!");
     }
 
