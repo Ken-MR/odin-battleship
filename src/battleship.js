@@ -73,7 +73,7 @@ class GameBoard {
     let startPoint = (direction === 'y') ? y : x;
 
     // if ship is placed such that it falls out of bounds on the board or overlaps another ship then reject placement
-    if ((startPoint + shipLength) > 7) {
+    if ((startPoint + shipLength) > 10) {
       return false;
     }
     else if (direction === 'y') {
@@ -106,6 +106,7 @@ class GameBoard {
         this.board[y][i].occupied = ship;
       }
     }
+    return true;
   }
 
   receiveAttack (coordinates) {

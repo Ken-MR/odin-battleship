@@ -40,12 +40,31 @@ const DOMControl = (() => {
 
     displayGameBoards();
   };
+
   // this function will be changed to randomly place them when the human player is given the ability to choose locations
   const placeComputerShips = () => {
+    let x;
+    let y;
+    // randomize the direction the ship will be placed
+    let direction = (Math.floor(Math.random() * 2) ? 'x' : 'y');
+    let coordinates;
+    let validPosition;
+
     for (let i = 0; i < 5; i++) {
-      computerPlayer.gameBoard.placeShip(shipTypes[i], shipDirection[i], shipPositions[i]);
+      do {
+        x = computerPlayer.getCoordinates();
+        y = computerPlayer.getCoordinates();
+        coordinates = [y, x];
+        // place ship function returns false if position is filled
+        // this prompts the loop to run again and choose new coordinates until it works
+        validPosition = computerPlayer.gameBoard.placeShip(shipTypes[i], direction, coordinates);
+        direction = (Math.floor(Math.random() * 2) ? 'x' : 'y');
+      } while (!validPosition);
+      // reset check for valid position
+      validPosition = false;
     }
   };
+
   const displayGameBoards = () => {
     // clear the form now that the game objects exist
     let gameDisplay = document.getElementById('game-display')
@@ -71,12 +90,19 @@ const DOMControl = (() => {
     computerBoard.setAttribute('id', 'computer');
     computerBoard.classList.add('game-board');
 
+    let playerHeader = document.createElement('h2');
+    playerHeader.appendChild(document.createTextNode(`${humanPlayer.name}'s Fleet`));
+    let computerHeader = document.createElement('h2');
+    computerHeader.appendChild(document.createTextNode(`Enemy Fleet`));
+
     let playerWaters = document.createElement('div');
     playerWaters.setAttribute('class', 'fleet-waters');
     let computerWaters = document.createElement('div');
     computerWaters.setAttribute('class', 'fleet-waters');
 
+    playerBoard.appendChild(playerHeader);
     playerBoard.appendChild(playerWaters);
+    computerBoard.appendChild(computerHeader);
     computerBoard.appendChild(computerWaters);
 
     ocean.appendChild(playerBoard);
@@ -201,9 +227,11 @@ const DOMControl = (() => {
     gameOver = true;
     let messageDisplay = document.getElementById('messages');
     if (type === 'human') {
+      messageDisplay.appendChild(document.createElement('br'));
       messageDisplay.appendChild(document.createTextNode("You lost!"));
     }
     else {
+      messageDisplay.appendChild(document.createElement('br'));
       messageDisplay.appendChild(document.createTextNode("You won!"));
     }
     playAgain();
