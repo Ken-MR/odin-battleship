@@ -4,21 +4,27 @@ import './style.css';
 // import various game logic functions to help run the page
 const gameLogic = require('../src/battleship.js');
 
-// variables to track the two players in the game
-let humanPlayer;
-let computerPlayer;
-
-// hard coded array of ship coordinates for testing
-// will be replaced with player choice and random computer coordinates in final game build
-let shipPositions = [[0,0], [1,9], [7,1], [5,4], [3,2]];
-let shipDirection = ['x', 'y', 'x', 'x', 'y'];
-let shipTypes = ['battleship', 'carrier', 'cruiser', 'submarine', 'destroyer'];
-
 window.onload = () => {
   document.getElementById('player-entry').addEventListener("submit", () => {DOMControl.playerCreation()});
 };
 
 const DOMControl = (() => {
+  // variables to track the two players in the game
+  let humanPlayer;
+  let computerPlayer;
+
+  // hard coded array of ship coordinates for testing
+  // will be replaced with player choice and random computer coordinates in final game build
+  let shipPositions = [[0,0], [1,9], [7,1], [5,4], [3,2]];
+  let shipDirection = ['x', 'y', 'x', 'x', 'y'];
+  let shipTypes = ['battleship', 'carrier', 'cruiser', 'submarine', 'destroyer'];
+
+  // tracker for computer activity
+  let computerMove = false;
+
+  // tracker for whether or not the game is over
+  let gameOver = false;
+
   const playerCreation = () => {
     let playerName = playerNameInput.value;
     humanPlayer = new gameLogic.GamePlayer(playerName, 'human');
@@ -75,13 +81,21 @@ const DOMControl = (() => {
         }
         computerWaters.appendChild(space);
         space.addEventListener('click', () => {
-          let hit = humanPlayer.targetSpace(humanPlayer.type, computerPlayer, [i, j]);
-          if (hit) {
-            space.classList.add('hit');
+          // if the computer is currently taking a turn the click event will not proceed
+          if (computerMove === true) {
+            return;
           }
-          else {
-            space.classList.add('miss');
-          }
+          computerMove = true;
+          playerTurn(i, j, space);
+
+          setTimeout(() => {
+            // if the game is over don't let the computer make a move
+            if (!gameOver) {
+              computerTurn();
+              computerMove = false;
+              // set to false; the computer made its move
+            }
+          }, 1000);
         });
       }
     }
@@ -95,6 +109,83 @@ const DOMControl = (() => {
         }
         playerWaters.appendChild(space);
       }
+    }
+  };
+
+  const playerTurn = (y, x, space) => {
+    let hit = humanPlayer.targetSpace(humanPlayer.type, computerPlayer, [y, x]);
+    if (hit) {
+      space.classList.add('hit');
+      // send message on game state
+      gameMessage(hit, humanPlayer);
+      return hit;
+    }
+    else {
+      space.classList.add('miss');
+      gameMessage(hit, humanPlayer);
+      return 'miss';
+    }
+  };
+
+  const computerTurn = () => {
+    let coordinates = computerPlayer.computerTarget(humanPlayer);
+    let hit = computerPlayer.targetSpace(computerPlayer.type, humanPlayer, coordinates);
+    let location = (coordinates[0] * 10) + coordinates[1];
+    let spaces = document.querySelector('.fleet-waters').children;
+    let space = spaces[location];
+
+    if (hit) {
+      space.classList.add('hit');
+      gameMessage(hit, computerPlayer);
+    }
+    else {
+      space.classList.add('miss');
+      gameMessage(hit, computerPlayer);
+    }
+  };
+
+  const gameMessage = (target, player) => {
+    if ((player.type === 'human') && (target)) {
+      console.log(`Direct hit, Captain ${player.name}!`)
+      if (target.occupied.sunk) {
+        console.log(`You sunk the enemy's ${target.occupied.shipType}!`);
+      }
+      else {
+        console.log(`You struck the enemy's ${target.occupied.shipType}!`);
+      }
+    }
+    else if (player.type === 'human') {
+      console.log("A miss! But we'll get them yet!");
+    }
+    else if ((player.type === 'computer') && (target)) {
+      console.log(`Blast!`);
+      if (target.occupied.sunk) {
+        console.log(`The enemy just sunk our ${target.occupied.shipType}!`);
+      }
+      else {
+        console.log(`The enemy's hit our ${target.occupied.shipType}!`);
+      }
+    }
+    else {
+      console.log("A miss! We're still in this!");
+    }
+
+    if (humanPlayer.gameBoard.lost) {
+      gameEnd('human');
+    }
+    else if (computerPlayer.gameBoard.lost) {
+      gameEnd('computer');
+    }
+  };
+
+  const gameEnd = (type) => {
+    gameOver = true;
+
+    if (type === 'human') {
+      console.log("You lost!");
+    }
+    else {
+      console.log("You won!");
     }
   };
   return { playerCreation };

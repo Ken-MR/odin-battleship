@@ -121,11 +121,11 @@ class GameBoard {
       this.board[y][x].occupied.hit();
       // check if any ships in the fleet are still floating
       this.fleetStatus();
-      // return true because the attack was a hit
-      return true;
+      // return object hit
+      return this.board[y][x];
     }
-    // return false for miss
-    return false;
+    // return null for miss
+    return null;
   }
 
   fleetStatus () {
@@ -133,11 +133,9 @@ class GameBoard {
       if (!this.fleet[i].sunk) {
         return false;
       }
-      else {
-        this.lost = true;
-        return true;
-      }
     }
+    this.lost = true;
+    return true;
   }
 }
 
@@ -153,29 +151,25 @@ class GamePlayer {
   }
 
   targetSpace (type, enemy, coordinates) {
-    // if the computer is firing then pick a random location to target
-    // keep selecting targets until an untargeted space is found
-    if (type === "computer") {
-      let targeted;
-      let x;
-      let y;
-      do {
-        x = this.getCoordinates();
-        y = this.getCoordinates();
-        targeted = enemy.board[y][x].struck;
-      } while (targeted)
-      let hit = enemy.gameBoard.receiveAttack([y, x]);
-      return hit;
-    }
-    // DOM prevents targeting a struck space by disabling click event so no need to check
-    else {
-      let hit = enemy.gameBoard.receiveAttack(coordinates);
-      return hit;
-    }
+    let hit = enemy.gameBoard.receiveAttack(coordinates);
+    return hit;
+  }
+
+  computerTarget (enemy) {
+    // calculate the location the computer will target
+    let targeted;
+    let x;
+    let y;
+    do {
+      x = this.getCoordinates();
+      y = this.getCoordinates();
+      targeted = enemy.gameBoard.board[y][x].struck;
+    } while (targeted);
+    return [y, x];
   }
 
   getCoordinates () {
-    // generate a random value between 0 and 6; the coordinate range of the game board
+    // generate a random value between 0 and 9; the coordinate range of the game board
     return Math.floor(Math.random() * 10);
   }
 }

@@ -85,6 +85,10 @@ label {
 }
 
 .game-board {
+  animation: fadeInAnimation ease 3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  
   height: 450px;
   width: 450px;
   padding: 10px;
