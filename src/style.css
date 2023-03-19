@@ -151,7 +151,7 @@ label {
   background-color: red;
 }
 
-#play-again {
+button {
   padding: 10px;
   background-color: grey;
   border-radius: 5px;

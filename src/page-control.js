@@ -19,6 +19,10 @@ const DOMControl = (() => {
   let shipDirection = ['x', 'y', 'x', 'x', 'y'];
   let shipTypes = ['battleship', 'carrier', 'cruiser', 'submarine', 'destroyer'];
 
+  // tracker for how many player ships have been placed
+  let currentShip = 0;
+  let shipLengths = [4, 5, 3, 3, 2];
+
   // tracker for computer activity
   let computerMove = false;
 
@@ -33,15 +37,97 @@ const DOMControl = (() => {
 
     // temporary section of code to populate the computer player's board with ships
     // will be replaced by player choice in final game build
-    for (let i = 0; i < 5; i++) {
+   /* for (let i = 0; i < 5; i++) {
       humanPlayer.gameBoard.placeShip(shipTypes[i], shipDirection[i], shipPositions[i]);
-    }
+    }*/
     // temporary code ends
 
-    displayGameBoards();
+    placePlayerShips();
+
+    //displayGameBoards();
   };
 
-  // this function will be changed to randomly place them when the human player is given the ability to choose locations
+  const placePlayerShips = () => {
+    // clear the form now that the player objects exist
+    let gameDisplay = document.getElementById('game-display')
+    gameDisplay.innerHTML = '';
+
+    let ocean = document.createElement('div');
+    ocean.setAttribute('id', 'game-waters');
+    ocean.appendChild(createGameBoard('human'));
+    let gameBoard = document.getElementById('game-board');
+
+    let messageDisplay = document.createElement('div');
+    messageDisplay.setAttribute('id', 'messages');
+    messageDisplay.appendChild(document.createTextNode(`Place your ${shipTypes[currentShip]}`));
+
+    let directionButton = document.createElement('button');
+    directionButton.textContent = 'x-axis';
+    directionButton.addEventListener('click', () => {
+      if (directionButton.textContent === 'x-axis') {
+        directionButton.textContent = 'y-axis';
+      }
+      else {
+        directionButton.textContent = 'x-axis';
+      }
+    });
+
+    gameDisplay.appendChild(messageDisplay);
+    gameDisplay.appendChild(directionButton);
+    gameDisplay.appendChild(ocean);
+
+    let playerWaters = document.querySelector('.fleet-waters');
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        let space = document.createElement('div');
+        space.classList.add('game-space');
+        playerWaters.appendChild(space);
+        space.addEventListener('click', () => {
+          currentShipPlacement(messageDisplay, playerWaters, [i, j], directionButton);
+        });
+      }
+    }
+    //gameBoard.appendChild(playerWaters);
+  };
+
+  const currentShipPlacement = (message, waters, coordinates, directionButton) => {
+    // extract currently selected direction
+    let direction = directionButton.textContent;
+    direction = direction.slice(0, 1);
+
+    // verify this is a valid position to place the ship
+    let validPosition;
+    validPosition = humanPlayer.gameBoard.placeShip(shipTypes[currentShip], direction, coordinates);
+    
+    if (validPosition) {
+      let spaces = waters.children;
+      let location;
+      let space;
+      if (direction === 'x') {
+        for (let i = 0; i < shipLengths[currentShip]; i++) {
+          location = (coordinates[0] * 10) + (coordinates[1] + i);
+          space = spaces[location];
+          space.classList.add('ship-space');
+        }
+      }
+      else {
+        for (let i = 0; i < shipLengths[currentShip]; i++) {
+          location = ((coordinates[0] + i) * 10) + coordinates[1];
+          space = spaces[location];
+          space.classList.add('ship-space');
+        }
+      }
+      currentShip++;
+      message.innerHTML = `Place your ${shipTypes[currentShip]}`;
+    }
+    else {
+      message.innerHTML = `Invalid location, try placing your ${shipTypes[currentShip]} again`;
+    }
+    if (currentShip > 4) {
+      displayGameBoards();
+    }
+  };
+
   const placeComputerShips = () => {
     let x;
     let y;
@@ -65,6 +151,27 @@ const DOMControl = (() => {
     }
   };
 
+  const createGameBoard = (type) => {
+    let board = document.createElement('div');
+    board.setAttribute('id', `${type}`);
+    board.classList.add('game-board');
+
+    let header = document.createElement('h2');
+    if (type === 'human') {
+      header.appendChild(document.createTextNode(`${humanPlayer.name}'s Fleet`));
+    }
+    else {
+      header.appendChild(document.createTextNode(`Enemy Fleet`));
+    }
+
+    let waters = document.createElement('div');
+    waters.setAttribute('class', 'fleet-waters');
+
+    board.appendChild(header);
+    board.appendChild(waters);
+    return board;
+  };
+
   const displayGameBoards = () => {
     // clear the form now that the game objects exist
     let gameDisplay = document.getElementById('game-display')
@@ -83,30 +190,11 @@ const DOMControl = (() => {
     gameDisplay.appendChild(ocean);
 
     // create game boards to manipulate
-    let playerBoard = document.createElement('div');
-    playerBoard.setAttribute('id', 'player');
-    playerBoard.classList.add('game-board');
-    let computerBoard = document.createElement('div');
-    computerBoard.setAttribute('id', 'computer');
-    computerBoard.classList.add('game-board');
+    ocean.appendChild(createGameBoard('human'));
+    ocean.appendChild(createGameBoard('computer'));
 
-    let playerHeader = document.createElement('h2');
-    playerHeader.appendChild(document.createTextNode(`${humanPlayer.name}'s Fleet`));
-    let computerHeader = document.createElement('h2');
-    computerHeader.appendChild(document.createTextNode(`Enemy Fleet`));
-
-    let playerWaters = document.createElement('div');
-    playerWaters.setAttribute('class', 'fleet-waters');
-    let computerWaters = document.createElement('div');
-    computerWaters.setAttribute('class', 'fleet-waters');
-
-    playerBoard.appendChild(playerHeader);
-    playerBoard.appendChild(playerWaters);
-    computerBoard.appendChild(computerHeader);
-    computerBoard.appendChild(computerWaters);
-
-    ocean.appendChild(playerBoard);
-    ocean.appendChild(computerBoard);
+    let computerWaters = document.querySelectorAll('.fleet-waters')[1];
+    let playerWaters = document.querySelectorAll('.fleet-waters')[0];
 
     // create event listeners for each space on the enemy game board to track if it was a hit or miss
     for (let i = 0; i < 10; i++) {
@@ -259,6 +347,7 @@ const DOMControl = (() => {
       // reset game states
       gameOver = false;
       computerMove = false;
+      currentShip = 0;
     });
   };
   return { playerCreation };
