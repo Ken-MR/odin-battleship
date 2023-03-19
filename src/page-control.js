@@ -33,18 +33,10 @@ const DOMControl = (() => {
     let playerName = playerNameInput.value;
     humanPlayer = new gameLogic.GamePlayer(playerName, 'human');
     computerPlayer = new gameLogic.GamePlayer();
+
     placeComputerShips();
 
-    // temporary section of code to populate the computer player's board with ships
-    // will be replaced by player choice in final game build
-   /* for (let i = 0; i < 5; i++) {
-      humanPlayer.gameBoard.placeShip(shipTypes[i], shipDirection[i], shipPositions[i]);
-    }*/
-    // temporary code ends
-
     placePlayerShips();
-
-    //displayGameBoards();
   };
 
   const placePlayerShips = () => {
@@ -87,7 +79,6 @@ const DOMControl = (() => {
         });
       }
     }
-    //gameBoard.appendChild(playerWaters);
   };
 
   const currentShipPlacement = (message, waters, coordinates, directionButton) => {
@@ -118,10 +109,10 @@ const DOMControl = (() => {
         }
       }
       currentShip++;
-      message.innerHTML = `Place your ${shipTypes[currentShip]}`;
+      message.innerHTML = `Place your ${shipTypes[currentShip]} (${shipLengths[currentShip]} spaces)`;
     }
     else {
-      message.innerHTML = `Invalid location, try placing your ${shipTypes[currentShip]} again`;
+      message.innerHTML = `Invalid location, your ${shipTypes[currentShip]} requires ${shipLengths[currentShip]} open spaces along your chosen axis`;
     }
     if (currentShip > 4) {
       displayGameBoards();
@@ -202,9 +193,9 @@ const DOMControl = (() => {
         let space = document.createElement('div');
         space.classList.add('game-space');
         // this class will be removed from enemy game board once ship positions are randomized
-        if (computerPlayer.gameBoard.board[i][j].occupied) {
-          space.classList.add('ship-space');
-        }
+        //if (computerPlayer.gameBoard.board[i][j].occupied) {
+          //space.classList.add('ship-space');
+        //}
         computerWaters.appendChild(space);
         space.addEventListener('click', () => {
           // if the computer is currently taking a turn the click event will not proceed
@@ -276,14 +267,6 @@ const DOMControl = (() => {
 
     if ((player.type === 'human') && (target)) {
       messageDisplay.appendChild(document.createTextNode(`Direct hit, Captain ${player.name}!`));
-      if (target.occupied.sunk) {
-        messageDisplay.appendChild(document.createElement('br'));
-        messageDisplay.appendChild(document.createTextNode(`You sunk the enemy's ${target.occupied.shipType}!`));
-      }
-      else {
-        messageDisplay.appendChild(document.createElement('br'));
-        messageDisplay.appendChild(document.createTextNode(`You struck the enemy's ${target.occupied.shipType}!`));
-      }
     }
     else if (player.type === 'human') {
       messageDisplay.appendChild(document.createTextNode("A miss! But we'll get them yet!"));
